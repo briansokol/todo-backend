@@ -14,11 +14,11 @@ def get_todos(
     due_before: Optional[date] = None,
 ):
     query = db.query(Todo).filter(Todo.list_id == list_id)
-    if priority:
+    if priority is not None:
         query = query.filter(Todo.priority == priority)
-    if status:
+    if status is not None:
         query = query.filter(Todo.status == status)
-    if due_before:
+    if due_before is not None:
         query = query.filter(Todo.due_date <= due_before)
     return query.order_by(Todo.created_at).all()
 
