@@ -8,7 +8,7 @@ from alembic import context
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.database import Base, DATABASE_URL
-from app.models import todo_list, todo  # noqa: F401
+from app.models import todo_list, todo  # noqa: F401 — registers models with Base.metadata for autogenerate
 
 config = context.config
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
