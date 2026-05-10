@@ -38,3 +38,4 @@ def test_tags_list_returns_501(client):
 def test_tags_create_returns_501(client):
     response = client.post("/tags", json={"name": "urgent", "color": "#ff0000"})
     assert response.status_code == 501
+    assert "not yet implemented" in response.json()["detail"].lower()
