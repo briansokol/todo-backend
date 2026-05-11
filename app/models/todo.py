@@ -1,8 +1,10 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, Date, ForeignKey, Enum
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
+from typing import List
 import enum
 from app.database import Base
+from app.models.tag import todo_tags, Tag
 
 
 class Priority(str, enum.Enum):
@@ -30,4 +32,4 @@ class Todo(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     list = relationship("TodoList", back_populates="todos")
-    # tags relationship intentionally omitted — feature not yet implemented
+    tags: Mapped[List[Tag]] = relationship(secondary=todo_tags, lazy="selectin")
