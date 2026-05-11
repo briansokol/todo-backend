@@ -130,6 +130,12 @@ def test_create_tag_invalid_color_returns_422(client):
     assert r.status_code == 422
 
 
+def test_create_tag_missing_color_returns_422(client):
+    """POST /tags returns 422 when color field is absent."""
+    r = client.post("/tags", json={"name": "x"})
+    assert r.status_code == 422
+
+
 def test_create_tag_empty_name_returns_422(client):
     """POST /tags returns 422 when name is empty."""
     r = client.post("/tags", json={"name": "", "color": "#ff0000"})
@@ -185,6 +191,22 @@ def test_add_tag_to_todo_tag_visible_on_todo(client):
     r = client.get(f"/todos/{todo_id}")
     assert r.status_code == 200
     tag_ids = [t["id"] for t in r.json()["tags"]]
+    assert tag["id"] in tag_ids
+
+
+def test_add_tag_visible_in_list_todos(client):
+    """After adding, tag appears in the todo's tags array on GET /lists/{list_id}/todos."""
+    list_id = _create_list(client)
+    todo_id = _create_todo(client, list_id)
+    tag = _create_tag(client, name="list-visible", color="#aabbcc")
+
+    client.post(f"/todos/{todo_id}/tags/{tag['id']}")
+
+    r = client.get(f"/lists/{list_id}/todos")
+    assert r.status_code == 200
+    todos = r.json()
+    assert len(todos) == 1
+    tag_ids = [t["id"] for t in todos[0]["tags"]]
     assert tag["id"] in tag_ids
 
 
