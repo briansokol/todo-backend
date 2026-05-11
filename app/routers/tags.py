@@ -1,33 +1,32 @@
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+from typing import List
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.database import get_db
+from app.schemas.todo import TagCreate, TagOut
+from app.services import tags as tags_service
 
 router = APIRouter(tags=["tags"])
 
-NOT_IMPLEMENTED = JSONResponse(
-    status_code=501,
-    content={"detail": "Tags feature not yet implemented. See specs/add-tags/ in todo-meta."},
-)
+
+@router.get("/tags", response_model=List[TagOut])
+def list_tags(db: Session = Depends(get_db)):
+    """List all tags."""
+    return tags_service.get_tags(db)
 
 
-@router.get("/tags")
-def list_tags():
-    """List all tags. NOT YET IMPLEMENTED."""
-    return NOT_IMPLEMENTED
+@router.post("/tags", response_model=TagOut, status_code=201)
+def create_tag(data: TagCreate, db: Session = Depends(get_db)):
+    """Create a new tag."""
+    return tags_service.create_tag(db, data)
 
 
-@router.post("/tags")
-def create_tag():
-    """Create a tag. NOT YET IMPLEMENTED."""
-    return NOT_IMPLEMENTED
+@router.post("/todos/{todo_id}/tags/{tag_id}", status_code=204)
+def add_tag_to_todo(todo_id: int, tag_id: int, db: Session = Depends(get_db)):
+    """Add a tag to a todo."""
+    tags_service.add_tag_to_todo(db, todo_id, tag_id)
 
 
-@router.post("/todos/{todo_id}/tags/{tag_id}")
-def add_tag_to_todo(todo_id: int, tag_id: int):
-    """Add a tag to a todo. NOT YET IMPLEMENTED."""
-    return NOT_IMPLEMENTED
-
-
-@router.delete("/todos/{todo_id}/tags/{tag_id}")
-def remove_tag_from_todo(todo_id: int, tag_id: int):
-    """Remove a tag from a todo. NOT YET IMPLEMENTED."""
-    return NOT_IMPLEMENTED
+@router.delete("/todos/{todo_id}/tags/{tag_id}", status_code=204)
+def remove_tag_from_todo(todo_id: int, tag_id: int, db: Session = Depends(get_db)):
+    """Remove a tag from a todo."""
+    tags_service.remove_tag_from_todo(db, todo_id, tag_id)

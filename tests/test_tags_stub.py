@@ -29,13 +29,13 @@ def client():
     return TestClient(app)
 
 
-def test_tags_list_returns_501(client):
+def test_tags_list_no_longer_returns_501(client):
+    """GET /tags is now implemented; 501 stub has been replaced."""
     response = client.get("/tags")
-    assert response.status_code == 501
-    assert "not yet implemented" in response.json()["detail"].lower()
+    assert response.status_code != 501
 
 
-def test_tags_create_returns_501(client):
+def test_tags_create_no_longer_returns_501(client):
+    """POST /tags is now implemented; 501 stub has been replaced."""
     response = client.post("/tags", json={"name": "urgent", "color": "#ff0000"})
-    assert response.status_code == 501
-    assert "not yet implemented" in response.json()["detail"].lower()
+    assert response.status_code != 501
