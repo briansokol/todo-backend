@@ -4,6 +4,11 @@ from pydantic import BaseModel, Field
 from app.models.todo import Priority, Status
 
 
+class TagCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=50)
+    color: str = Field(pattern=r"^#[0-9a-fA-F]{6}$")
+
+
 class TagOut(BaseModel):
     id: int
     name: str
